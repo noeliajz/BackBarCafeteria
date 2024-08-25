@@ -17,7 +17,7 @@ const UsuarioSchema = new Schema({
   pass: {
     type: String,
     minlength: 3,
-    maxlength: 25,
+    maxlength: 72,
     require: true
  },
   rol: {

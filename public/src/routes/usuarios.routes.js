@@ -21,8 +21,8 @@ router
         check("pass")
         .notEmpty()
         .withMessage('La contraseña es obligatoria')
-        .isLength({ min: 3, max: 8 })
-        .withMessage('La contraseña debe tener entre 3 y 8 caracteres'),
+        .isLength({ min: 3, max: 72 })
+        .withMessage('La contraseña debe tener entre 3 y 72 caracteres'),
         check("rol")
         .notEmpty()
         .withMessage('El rol es obligatorio')
@@ -46,8 +46,8 @@ router
         check("pass")
         .notEmpty()
         .withMessage('La contraseña es obligatoria')
-        .isLength({ min: 3, max: 8 })
-        .withMessage('La contraseña debe tener entre 3 y 8 caracteres'),
+        .isLength({ min: 3, max: 72 })
+        .withMessage('La contraseña debe tener entre 3 y 72 caracteres'),
         check("rol")
         .notEmpty()
         .withMessage('El rol es obligatorio')
@@ -62,7 +62,7 @@ router
         check('usuario', 'El campo USUARIO de usuario esta vacío').notEmpty(),
        check('usuario', 'El mínimo es de 3 caracteres y maximo 25 caracteres').isLength({ min:3 , max: 25}),
        check('pass', 'El campo contraseña esta vacío').notEmpty(), 
-       check('pass', 'El mínimo es de 3 caracteres y máximo 8').isLength({ min:3 , max: 8})
+       check('pass', 'El mínimo es de 3 caracteres y máximo 72').isLength({ min:3 , max: 72})
    ], loginUser)
    router.put('/logout',  /* auth('user'), */  logoutUser)
 
