@@ -1,8 +1,13 @@
 import { validationResult } from 'express-validator';
 import Usuario from '../models/usuario';
+import bcrypt from 'bcrypt'
 
 export const crearUsuario = async (req, res) => {
     try {
+        const usuario = await Usuario.findOne({usuario: req.body.usuario})
+        if(usuario){
+           return  res.status(400).json({mensaje: 'ya existe el usuario enviado'})
+        }
         const errors = validationResult(req);
 
         if (!errors.isEmpty()) {
@@ -12,6 +17,8 @@ export const crearUsuario = async (req, res) => {
         }
 
         const nuevoUsuario = new Usuario(req.body);
+        const salt = bcrypt.genSaltSync(10)
+        nuevoUsuario.pass = bcrypt.hashSync(req.body.pass, salt)
         await nuevoUsuario.save();
 
         res.status(201).json({
@@ -63,3 +70,58 @@ export const eliminarUsuario = async (req, res) => {
     })
    }
 }
+
+export const loginUser = async (req, res) => {
+    try {
+     const errors = validationResult(req);
+     if (!errors.isEmpty()) {
+       res.status(400).json({ msg: errors.array() });
+     }
+ 
+     const { usuario, pass } = req.body;
+     
+     const userExist = await UserModel.findOne({ usuario });
+     console.log(userExist)
+     if (!userExist) {
+       return res.status(400).json({ msg: "El usuario no existe" });
+     }
+     const passCheck = await bcrypt.compare(pass, userExist.pass);
+ 
+     if (passCheck) {
+       const jwtPayload = {
+         usuario: {
+           id: userExist._id,
+           username: userExist.usuario,
+         },
+       };
+       const token = jwt.sign(jwtPayload, process.env.SECRET_key);
+       userExist.token = token;
+         userExist.save()
+        res.status(200).json({ msg: "Usuario logueado" , userExist});
+       
+       
+
+       } else {
+       res.status(422).json({ msg: "Usuario y/o contraseña incorrecto" });
+     }
+   } catch (error) {
+     console.log(error);
+   } 
+     
+     
+   }; 
+ 
+ 
+   export const logoutUser = async (req, res) => {
+      const userId = await UserModel.findOne({ _id: req.body.userLoginId });
+     console.log(userId);
+     userId.token = "";
+     const userLogout = await UserModel.findByIdAndUpdate(
+       { _id: req.body.userLoginId },
+       userId,
+       { new: true } 
+      );
+ 
+     console.log(userLogout);
+     res.status(200).json({ msg: "Usuario deslogueado" }); 
+   };
